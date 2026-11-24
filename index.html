@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="th" data-brand="black">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Farm Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#fff;--card:#fff;--muted:#f4f4f5;--fg:#18181b;--mfg:#71717a;--bd:#e4e4e7;
+  --brand:#18181b;--s1:#18181b;--s2:#3a3a40;--c1:#3b82f6;--c2:#22a860;--c3:#e9b72a;--red:#ef4444;--onbrand:#fff;
+  --page:#f4f4f5;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0e11;--card:#1a1a1f;--muted:#131316;--fg:#f4f4f5;--mfg:#a1a1aa;--bd:#2a2a31;--page:#0a0a0c;--brand:#ececee;--onbrand:#18181b;--s1:#2a2a2f;--s2:#1d1d21;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e0e11;--card:#1a1a1f;--muted:#131316;--fg:#f4f4f5;--mfg:#a1a1aa;--bd:#2a2a31;--page:#0a0a0c;--brand:#ececee;--onbrand:#18181b;--s1:#2a2a2f;--s2:#1d1d21;color-scheme:dark}
+:root[data-brand="blue"]{--brand:#2f6feb;--s1:#2f6feb;--s2:#5b8def;--onbrand:#fff}
+:root[data-brand="teal"]{--brand:#14a39a;--s1:#14a39a;--s2:#3cc4b8;--onbrand:#fff}
+:root[data-brand="orange"]{--brand:#f08a1c;--s1:#f08a1c;--s2:#f6a94d;--onbrand:#fff}
+:root[data-brand="pink"]{--brand:#e0589f;--s1:#e0589f;--s2:#ee86bd;--onbrand:#fff}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--fg);font-family:"Prompt","Noto Sans Thai",system-ui,sans-serif;font-size:14px}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.shell{max-width:1500px;margin:0 auto;padding:12px}
+.frame{display:flex;height:calc(100vh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:560px;background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 0 0 1px var(--bd)}
+aside{width:208px;background:linear-gradient(to bottom,var(--s1),var(--s2));color:#fff;display:flex;flex-direction:column;border-radius:24px 0 0 24px;transition:width .3s;flex:none}
+aside.c{width:78px}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:20px 16px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem}
+.logo i{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-style:normal}
+.ibtn{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:6px 8px}
+nav{flex:1;padding:8px 12px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+nav a{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;color:rgba(255,255,255,.9);text-decoration:none}
+nav a:hover{background:rgba(255,255,255,.1)}
+nav a.on{background:#f4f4f5;color:#18181b}
+aside.c .t,aside.c .logo span,aside.c .tip{display:none}
+.tip{margin:8px 12px 20px;background:rgba(255,255,255,.1);border-radius:16px;padding:12px;font-size:.78rem}
+main{flex:1;min-width:0;background:var(--muted);overflow:auto;padding:0 28px 24px;border-radius:0 24px 24px 0}
+.top{position:sticky;top:0;z-index:20;margin:0 -28px 22px;padding:0 28px;height:64px;display:flex;align-items:center;gap:12px;background:color-mix(in srgb,var(--muted) 85%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+.search{flex:1;max-width:520px;position:relative}
+.search input{width:100%;border:1px solid var(--bd);background:var(--bg);border-radius:999px;padding:9px 14px 9px 38px}
+.search span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mfg)}
+.menu{display:none}
+.tb{position:relative;border:0;background:transparent;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:1.05rem}
+.tb:hover{background:var(--bd)}
+.badge{position:absolute;top:2px;right:0;background:var(--red);color:#fff;border-radius:99px;font-size:10px;min-width:16px;height:16px;display:grid;place-items:center;padding:0 4px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--bd);display:grid;place-items:center;font-size:.8rem;font-weight:500}
+.pop{position:absolute;right:0;top:46px;width:250px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px;box-shadow:0 12px 32px rgba(0,0,0,.15)}
+.pop h4{margin:6px 8px;font-size:.8rem;color:var(--mfg);font-weight:500}
+.pop button.it,.pop a.it{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px;border-radius:8px;color:var(--fg);text-decoration:none;font-size:.85rem}
+.pop .it:hover{background:var(--muted)}
+.sw{position:relative;width:42px;height:24px;border-radius:12px;border:0;background:var(--bd);flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.sw[aria-checked="true"]{background:var(--brand)}
+.sw[aria-checked="true"]::after{transform:translateX(18px)}
+:root[data-theme="dark"] .sw[aria-checked="true"]::after{background:#18181b}
+.seg{display:flex;background:var(--muted);border-radius:10px;padding:3px;gap:2px;margin-top:6px}.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:6px 4px;font-size:.75rem;color:var(--mfg)}.seg button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--bd)}
+.dots{display:flex;gap:8px;margin-top:6px}
+.dots button{width:22px;height:22px;border-radius:50%;border:1px solid var(--bd);box-shadow:0 0 0 2px transparent}
+.dots button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--mfg)}
+.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 0 0 1px var(--bd);min-width:0}
+.card h2,.card h3{margin:0;font-size:.88rem;font-weight:600}
+.sub{color:var(--mfg);font-size:.75rem}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.stack>*+*{margin-top:20px}
+.g3{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gz{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.welcome{background:linear-gradient(135deg,var(--s1),var(--s2));color:#fff;border-radius:24px;padding:24px;display:flex;gap:16px;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.welcome h1{margin:0;font-size:1.9rem;font-weight:600}
+.welcome p{opacity:.9;line-height:1.7;margin:8px 0 0}
+.wbox{display:flex;gap:16px;align-items:center;background:rgba(255,255,255,.1);border-radius:16px;padding:12px 16px;margin-top:16px;width:fit-content}
+.wbox b{font-size:1.6rem;font-weight:400}
+.welcome svg{width:min(360px,40%);flex:none}
+.zone{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 0 0 1px var(--bd)}
+.zone .r{display:flex;align-items:center;gap:8px}
+.zi{width:32px;height:32px;border-radius:12px;background:var(--brand);color:var(--onbrand);display:grid;place-items:center;font-size:.95rem}
+.bar{height:6px;background:var(--muted);border-radius:99px;margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.warn{color:var(--red)}
+.dev{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 0 0 1px var(--bd)}
+.dev .r{display:flex;justify-content:space-between;align-items:center}
+.dev .ic{font-size:1.4rem}
+.scn{display:flex;gap:12px;align-items:center;background:var(--card);border-radius:16px;padding:14px;box-shadow:0 0 0 1px var(--bd);width:100%;text-align:left;border:0}
+.scn .ic{font-size:1.4rem}
+.big{font-size:1.9rem;font-weight:700;color:var(--brand);margin-top:6px}
+.vbar{width:8px;height:96px;background:var(--muted);border-radius:99px;position:relative;margin-top:14px}
+.vbar i{position:absolute;bottom:0;width:8px;background:var(--brand);border-radius:99px;transition:height .3s}
+.chip{background:var(--muted);border-radius:99px;padding:4px 12px;font-size:.8rem}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.irr{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+.btns{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.btns button{border:0;border-radius:12px;background:var(--muted);padding:8px;font-size:.82rem}
+.btns button.p{background:var(--brand);color:var(--onbrand)}
+svg text{fill:var(--mfg);font-family:inherit}
+.lg{display:flex;gap:14px;justify-content:center;font-size:.75rem;color:var(--mfg);margin-top:6px}
+.lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.page{padding:26px}
+.page h1{margin:0;font-size:1.5rem;font-weight:600}
+.page>p{color:var(--mfg);margin:6px 0 22px}
+.inner{background:var(--muted);border-radius:12px;padding:14px;box-shadow:0 0 0 1px var(--bd)}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--bd)}
+.list li:first-child{border-top:0}
+.list .av{flex:none}
+.tag{background:var(--muted);border-radius:99px;padding:3px 10px;font-size:.72rem}
+.ev{display:flex;justify-content:space-between;padding:6px 0;font-size:.85rem}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.ov{display:none}
+@media (max-width:1100px){.g3{grid-template-columns:1fr}.gz{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:860px){
+  .shell{padding:0}
+  .frame{border-radius:0;height:100vh;height:100dvh;box-shadow:none}
+  aside{position:fixed;left:0;top:0;bottom:0;z-index:50;transform:translateX(-100%);transition:transform .3s;width:230px;border-radius:0 24px 24px 0;padding-top:env(safe-area-inset-top,0px)}
+  aside.c{width:230px}aside.c .t,aside.c .logo span,aside.c .tip{display:revert}
+  aside.mo{transform:none}
+  .ov.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
+  main{padding:0 14px 20px;border-radius:0}
+  .top{margin:0 -14px 16px;padding:0 14px}
+  .menu{display:grid}
+  .hidem{display:none}
+  .welcome{flex-direction:column;align-items:flex-start}.welcome svg{width:100%}
+  .g2,.irr{grid-template-columns:1fr}
+  .page{padding:18px}
+}
+@media (max-width:520px){.gz{grid-template-columns:repeat(2,1fr)}.welcome h1{font-size:1.5rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.manage-scroll{overflow-x:auto}.manage-table{width:100%;border-collapse:collapse;text-align:left;min-width:470px}.manage-table th,.manage-table td{padding:12px 9px;border-bottom:1px solid var(--bd)}.manage-table button,.manage-actions button{border:1px solid var(--bd);background:var(--card);border-radius:9px;padding:7px 12px}.manage-primary{background:var(--brand)!important;color:var(--onbrand)!important;border:0!important;border-radius:10px;padding:9px 15px;cursor:pointer}.manage-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:grid;place-items:center;padding:16px}.manage-dialog{width:min(440px,100%);max-height:90vh;overflow:auto;background:var(--card);padding:24px;border-radius:18px;display:grid;gap:14px}.manage-dialog h2{margin:0}.manage-field{display:grid;gap:6px}.manage-field input,.manage-field select{width:100%;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--fg);padding:10px}.manage-actions{display:flex;justify-content:flex-end;gap:10px}
+
+/* Working hamburger toggle on desktop and mobile */
+.top .menu{display:grid;flex:none;border:1px solid var(--bd);border-radius:11px;background:var(--card);font-size:19px;transition:background .2s,transform .2s}
+.top .menu:hover{background:var(--bd)}
+.top .menu:active{transform:scale(.94)}
+/* Refined Smart Farm sidebar */
+aside{width:244px;background:linear-gradient(165deg,#22242d 0%,#17191f 100%);border-right:1px solid rgba(255,255,255,.07)}
+aside.c{width:84px}
+.brandrow{min-height:88px;padding:18px 14px;gap:10px}
+.logo{min-width:0;gap:11px;white-space:nowrap;font-size:15px;letter-spacing:.1px}
+.logo i{flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(145deg,#41454e,#2b2e36);font-size:22px;box-shadow:inset 0 1px rgba(255,255,255,.1)}
+.logo span{overflow:hidden;text-overflow:ellipsis}
+.ibtn{flex:none;width:30px;height:32px;padding:0;display:grid;place-items:center;border:1px solid rgba(255,255,255,.12);background:#343740;border-radius:10px;font-size:18px;transition:background .2s}
+.ibtn:hover{background:#454a55}
+aside nav{padding:10px 12px;gap:7px;overflow-x:hidden}
+aside nav a{min-height:48px;padding:0 14px;gap:14px;border-radius:13px;white-space:nowrap;font-weight:500;transition:background .2s,transform .2s;color:#c7cbd4}
+aside nav a>span:first-child{width:25px;min-width:25px;display:grid;place-items:center;font-size:19px;line-height:1.3}
+aside nav a:hover{background:rgba(255,255,255,.09);color:white}
+aside nav a.on{background:#f5f6f8;color:#171a20;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+aside.c .brandrow{flex-direction:column;justify-content:center;gap:12px;padding:16px 8px 12px;min-height:116px}
+aside.c .logo{justify-content:center;width:100%}
+aside.c .logo i{width:46px;height:46px}
+aside.c .ibtn{width:36px;height:28px;font-size:16px}
+aside.c nav{padding:8px 10px;align-items:stretch}
+aside.c nav a{width:64px;height:54px;min-height:54px;padding:0;justify-content:center;margin:0 auto;border-radius:14px}
+aside.c nav a>span:first-child{font-size:22px;width:30px;min-width:30px}
+aside.c .tip{display:none}
+@media(max-width:860px){
+ aside,aside.c{width:244px}
+ aside.c .brandrow{flex-direction:row;justify-content:space-between;min-height:88px;padding:18px 14px}
+ aside.c .logo{width:auto;justify-content:flex-start}
+ aside.c nav{padding:10px 12px}
+ aside.c nav a{width:auto;height:48px;min-height:48px;justify-content:flex-start;padding:0 14px;margin:0}
+ aside.c nav a>span:first-child{font-size:19px;width:25px;min-width:25px}
+}
+aside.c .brandrow{justify-content:center}
+
+/* Motion: only animate page entry, not realtime database refreshes. */
+@media (prefers-reduced-motion: no-preference){
+ @keyframes sf-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+ @keyframes sf-pop{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+ @keyframes sf-dialog{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+ @keyframes sf-fade{from{opacity:0}to{opacity:1}}
+ #page.sf-enter{animation:sf-enter .32s cubic-bezier(.2,.75,.25,1) both}
+ .pop{animation:sf-pop .2s ease-out both;transform-origin:top right}
+ .manage-overlay{animation:sf-fade .18s ease-out both}
+ .manage-dialog{animation:sf-dialog .28s cubic-bezier(.2,.75,.25,1) both}
+ .card,.zone,.dev,.inner,.scn{transition:transform .22s ease,box-shadow .22s ease,background .22s ease}
+ .sw,.tb,.btns button,.manage-primary,.manage-table button{transition:transform .16s ease,background .2s ease,box-shadow .2s ease}
+ button:active:not(.sw){transform:scale(.96)}
+ .sw:active{transform:scale(.93)}
+ .bar i,#garc{transition:width .4s ease,stroke-dashoffset .35s ease}
+ @media(hover:hover) and (pointer:fine){
+  .zone:hover,.dev:hover,.scn:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.13),0 0 0 1px var(--bd)}
+  aside nav a:hover{transform:translateX(3px)}
+  aside.c nav a:hover{transform:translateY(-2px)}
+  .manage-primary:hover,.btns button:hover{filter:brightness(1.1)}
+ }
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Continuous sidebar motion: keep labels mounted while collapsing. */
+aside{overflow:hidden;transition:width .42s cubic-bezier(.22,1,.36,1),transform .42s cubic-bezier(.22,1,.36,1)}
+@media(min-width:861px){
+ aside .brandrow,aside.c .brandrow{min-height:88px;padding:18px 14px;flex-direction:row;justify-content:flex-start}
+ aside .logo,aside.c .logo{justify-content:flex-start;width:100%;gap:11px}
+ aside .logo i,aside.c .logo i{width:44px;height:44px}
+ aside nav,aside.c nav{padding:10px 12px;align-items:stretch}
+ aside nav a,aside.c nav a{width:100%;height:48px;min-height:48px;margin:0;padding:0 14px;justify-content:flex-start;gap:14px;transition:background .2s,transform .2s,padding .42s cubic-bezier(.22,1,.36,1)}
+ aside.c nav a{padding-left:17px;padding-right:0}
+ aside nav a>span:first-child,aside.c nav a>span:first-child{width:25px;min-width:25px;font-size:19px}
+ aside .t,aside .logo span,aside .tip,aside.c .t,aside.c .logo span,aside.c .tip{display:block;white-space:nowrap;opacity:1;transform:translateX(0);transition:opacity .24s ease,transform .35s ease;overflow:hidden}
+ aside.c .t,aside.c .logo span,aside.c .tip{opacity:0;transform:translateX(-10px);pointer-events:none}
+ aside .t,aside .logo span{flex:none}
+}
+@media(max-width:860px){.ov,.ov.on{display:block;opacity:0;visibility:hidden;pointer-events:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40;transition:opacity .35s ease,visibility .35s}.ov.on{opacity:1;visibility:visible;pointer-events:auto}}
+@media(prefers-reduced-motion:reduce){aside,aside *, .ov{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell"><div class="frame">
+  <aside id="side" aria-label="เมนูหลัก"></aside>
+  <div class="ov" id="ov"></div>
+  <main id="main"><div class="top" id="top"></div><div id="page"></div></main>
+</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var PAGES=[["manage","จัดการฟาร์ม","✎"],["dashboard","หน้าแรก","⌂"],["messages","แจ้งเตือน","🔔"],["statistics","สถิติ","▥"],["security","ความปลอดภัย","🛡"],["devices","อุปกรณ์","⚙"],["profile","โปรไฟล์","☺"]];
+var S={col:false,mob:false,menu:null,q:"",irr:65,clim:true,
+ zones:[["โรงเรือน A",52,"🏠"],["โรงเรือน B",38,"🏠"],["โรงเรือน C",61,"🏠"],["แปลงกลางแจ้ง 1",47,"☀"],["แปลงกลางแจ้ง 2",66,"☀"],["แปลงผักสวนครัว",44,"🌱"]].map(function(z){return{n:z[0],m:z[1],i:z[2],on:true}}),
+ pop:[["ปั๊มน้ำ","💧",false],["พัดลมระบายอากาศ","🌀",false],["ไฟเสริมแสง","💡",false],["วาล์วหมอกน้ำ","🌧",false]].map(function(d){return{n:d[0],i:d[1],on:d[2]}}),
+ devs:[["ปั๊มน้ำ","โรงเรือน A","💧",1],["พัดลมระบายอากาศ","โรงเรือน B","🌀",1],["ไฟเสริมแสง","โรงเรือน A","💡",0],["วาล์วหมอกน้ำ","แปลงกลางแจ้ง 1","🌧",1],["ปั๊มน้ำ","แปลงผักสวนครัว","💧",0],["พัดลมระบายอากาศ","โรงเรือน C","🌀",0]].map(function(d){return{n:d[0],z:d[1],i:d[2],on:!!d[3]}}),
+ sec:{door:true,cam:true,alarm:false},prof:{notif:true,water:false}};
+// Firebase Test Mode: databaseURL can be edited in Settings if your region differs.
+var firebaseConfig={apiKey:"AIzaSyCYgDIaBA2giHh0WiLd0YGkPYFMt2W-erc",authDomain:"smart-farm-iot-73623.firebaseapp.com",databaseURL:"https://smart-farm-iot-73623-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"smart-farm-iot-73623",storageBucket:"smart-farm-iot-73623.firebasestorage.app",messagingSenderId:"1093307064686",appId:"1:1093307064686:web:4ac4a40c5562e82e10e17f"};
+S.locations=[{n:"โซนโรงเรือน"},{n:"พื้นที่กลางแจ้ง"}];
+S.zones.forEach(function(z){z.location=z.n.indexOf("โรงเรือน")===0?"โซนโรงเรือน":"พื้นที่กลางแจ้ง"});
+var farmDb=null,farmReady=false,farmApplying=false,farmStatus="กำลังเชื่อมต่อ...",farmTimer=null;
+try{firebaseConfig.databaseURL=localStorage.getItem("smartfarm-db-url")||firebaseConfig.databaseURL}catch(e){}
+function farmData(){return {zones:S.zones,locations:S.locations,emptyZones:S.zones.length===0,emptyLocations:S.locations.length===0,emptyDevs:S.devs.length===0,pop:S.pop,devs:S.devs,sec:S.sec,prof:S.prof,irr:S.irr,clim:S.clim}}
+function farmSave(){if(!farmReady||farmApplying)return;clearTimeout(farmTimer);farmTimer=setTimeout(function(){farmDb.ref('smartfarm/dashboard').set(farmData()).catch(function(e){farmStatus='บันทึกไม่สำเร็จ: '+e.message;toast(farmStatus)})},180)}
+function farmConnect(){
+ try{
+  if(!window.firebase)throw Error('โหลด Firebase SDK ไม่สำเร็จ');
+  if(firebase.apps.length)firebase.app().delete().catch(function(){});
+  var app=firebase.initializeApp(firebaseConfig,'farm-'+Date.now());farmDb=app.database();farmReady=false;
+  farmDb.ref('smartfarm/dashboard').on('value',function(snap){
+    var v=snap.val();farmApplying=true;
+    if(v){['zones','locations','pop','devs'].forEach(function(k){if(Array.isArray(v[k]))S[k]=v[k]});
+      if(v.emptyZones)S.zones=[];if(v.emptyLocations)S.locations=[];if(v.emptyDevs)S.devs=[];if(v.sec&&typeof v.sec==='object')S.sec=v.sec;if(v.prof&&typeof v.prof==='object')S.prof=v.prof;
+      if(typeof v.irr==='number')S.irr=v.irr;if(typeof v.clim==='boolean')S.clim=v.clim;
+    }
+    farmApplying=false;farmReady=true;farmStatus='🟢 Firebase เชื่อมต่อแล้ว';render();
+    if(!v)farmSave();
+  },function(err){farmReady=false;farmStatus='🔴 '+err.message;renderTop();toast(farmStatus)});
+ }catch(e){farmReady=false;farmStatus='🔴 '+e.message;renderTop();toast(farmStatus)}
+}
+function farmSetup(){var url=prompt('Realtime Database URL (ตรวจสอบจาก Firebase Console)',firebaseConfig.databaseURL);if(!url)return;firebaseConfig.databaseURL=url.trim().replace(/\/$/,'');try{localStorage.setItem('smartfarm-db-url',firebaseConfig.databaseURL)}catch(e){};location.reload()}
+var mq=window.matchMedia?matchMedia("(prefers-color-scheme:dark)"):{matches:false};
+var mode="auto";try{mode=localStorage.getItem("sf-theme")||"auto"}catch(e){}
+var dark=false;
+function saveMode(){try{localStorage.setItem("sf-theme",mode)}catch(e){}}
+function applyTheme(){dark=mode==="dark"||(mode==="auto"&&mq.matches);document.documentElement.setAttribute("data-theme",dark?"dark":"light")}
+if(mq.addEventListener)mq.addEventListener("change",function(){if(mode==="auto"){applyTheme();renderTop()}});
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.k);toast.k=setTimeout(function(){t.classList.remove("show")},2200)}
+function sw(k,on,label){return '<button class="sw" role="switch" aria-checked="'+on+'" aria-label="'+label+'" data-k="'+k+'"></button>'}
+function route(){var h=(location.hash||"").slice(1);return PAGES.some(function(p){return p[0]===h})?h:"dashboard"}
+
+/* ---------- charts ---------- */
+var MON=["ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย."];
+var DATA=[[50,30,40],[70,50,60],[60,40,55],[65,45,60],[90,70,80],[75,85,50],[68,60,55],[62,52,48]];
+function bars(h){
+  var W=640,H=h,px=34,py=26,cw=(W-2*px)/8,s="",col=["var(--c1)","var(--c2)","var(--c3)"];
+  for(var i=0;i<=4;i++){var y=H-py-i*(H-2*py)/4;s+='<line x1="'+px+'" x2="'+(W-px)+'" y1="'+y+'" y2="'+y+'" stroke="var(--bd)" stroke-dasharray="3 3"/><text x="'+(px-8)+'" y="'+(y+3)+'" font-size="10" text-anchor="end">'+i*25+'</text>'}
+  DATA.forEach(function(d,i){var x=px+i*cw+cw/2;d.forEach(function(v,j){var bh=v/100*(H-2*py);s+='<rect x="'+(x-18+j*12.5)+'" y="'+(H-py-bh)+'" width="11" height="'+bh+'" rx="3" fill="'+col[j]+'"/>'});s+='<text x="'+x+'" y="'+(H-8)+'" font-size="10" text-anchor="middle">'+MON[i]+'</text>'});
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="กราฟการใช้ทรัพยากรรายเดือน" style="width:100%;height:auto">'+s+'</svg><div class="lg"><span><i style="background:var(--c1)"></i>น้ำ</span><span><i style="background:var(--c2)"></i>ปุ๋ย</span><span><i style="background:var(--c3)"></i>ไฟฟ้า</span></div>'
+}
+function gauge(v){
+  var r=85,c=2*Math.PI*r,arc=270/360*c,off=arc-v/100*arc;
+  return '<svg viewBox="0 0 220 220" style="width:200px;max-width:100%;display:block;margin:0 auto" role="img" aria-label="ระดับการให้น้ำ"><g transform="translate(110,110) rotate(225)"><circle r="85" fill="none" stroke="var(--bd)" stroke-width="16" stroke-dasharray="'+arc+' '+c+'"/><circle id="garc" r="85" fill="none" stroke="var(--brand)" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+arc+' '+c+'" stroke-dashoffset="'+off+'"/></g><text id="gtxt" x="110" y="118" text-anchor="middle" font-size="34" font-weight="600" style="fill:var(--fg)">'+v+'%</text></svg>'
+}
+function lastBars(){
+  var v=[18,15,28,12,40,20,30,18],s="";
+  v.forEach(function(x,i){var h=x/40*110;s+='<rect x="'+(14+i*34)+'" y="'+(130-h)+'" width="22" height="'+h+'" rx="6" fill="'+(i===4?"var(--brand)":"var(--mfg)")+'" opacity="'+(i===4?1:.55)+'"/><text x="'+(25+i*34)+'" y="148" font-size="11" text-anchor="middle">'+(18+i)+'</text>'});
+  return '<svg viewBox="0 0 290 154" style="width:100%;height:auto" role="img" aria-label="การใช้น้ำย้อนหลัง">'+s+'</svg>'
+}
+function radial(t,v,col,cap){
+  var r=60,c=2*Math.PI*r;
+  return '<div class="card"><h3>'+t+'</h3><svg viewBox="0 0 160 160" style="width:170px;display:block;margin:8px auto" role="img" aria-label="'+t+' '+v+'%"><circle cx="80" cy="80" r="60" fill="none" stroke="var(--bd)" stroke-width="16"/><circle cx="80" cy="80" r="60" fill="none" stroke="'+col+'" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+(c*v/100)+' '+c+'" transform="rotate(-90 80 80)"/></svg><div style="text-align:center;font-size:1.5rem;font-weight:700">'+v+'%</div><div class="sub" style="text-align:center">'+cap+'</div></div>'
+}
+var ART='<svg viewBox="0 0 400 260" role="img" aria-label="ภาพประกอบฟาร์ม"><circle cx="318" cy="62" r="30" fill="#fff" opacity=".85"/><path d="M0 170Q90 120 200 160T400 140V260H0Z" fill="#fff" opacity=".14"/><path d="M0 200Q110 160 220 195T400 180V260H0Z" fill="#fff" opacity=".22"/><g fill="none" stroke="#fff" stroke-width="2" opacity=".9"><path d="M70 190V150Q70 128 105 128Q140 128 140 150V190Z" fill="#fff" fill-opacity=".12"/><path d="M105 128V190M88 140V190M122 140V190M70 165H140"/></g><g stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"><path d="M180 215H380M170 232H390M160 249H400"/></g><g fill="#fff" opacity=".9">'+[200,235,270,305,340].map(function(x){return '<path d="M'+x+' 212q-7-12 0-20q7 8 0 20Z"/>'}).join("")+[190,225,260,295,330,365].map(function(x){return '<path d="M'+x+' 229q-7-12 0-20q7 8 0 20Z"/>'}).join("")+'</g></svg>';
+
+/* ---------- shell ---------- */
+function renderSide(){
+  var cur=route(),a=$("side");
+  a.className=(S.col?"c ":"")+(S.mob?"mo":"");
+  if(a.dataset.route!==cur){a.dataset.route=cur; a.innerHTML='<div class="brandrow"><div class="logo"><i>🌱</i><span>Smart Farm</span></div></div><nav>'+
+  PAGES.map(function(p){return '<a href="#'+p[0]+'" title="'+p[1]+'"'+(p[0]===cur?' class="on" aria-current="page"':'')+'><span aria-hidden="true">'+p[2]+'</span><span class="t">'+p[1]+'</span></a>'}).join("")+
+  '</nav><div class="tip">'+'ดูแลฟาร์มได้ง่ายๆ จากที่เดียว</div>';}
+  $("ov").className="ov"+(S.mob?" on":"");
+}
+function renderTop(){
+  var m=S.menu,notes=["รดน้ำโรงเรือน A เสร็จแล้ว","ล็อกประตูฟาร์มแล้ว","ถึงเวลาเปลี่ยนไส้กรองน้ำ"];
+  var br=["black","blue","teal","orange","pink"],bc={black:"#18181b",blue:"#2f6feb",teal:"#14a39a",orange:"#f08a1c",pink:"#e0589f"},cb=document.documentElement.getAttribute("data-brand");
+  $("top").innerHTML='<button class="tb menu" data-k="mob" aria-label="สลับการแสดงเมนูด้านข้าง" aria-controls="side">☰</button><label class="search"><span>🔍</span><input id="q" value="'+S.q+'" placeholder="ค้นหาแปลง อุปกรณ์ หรือผู้ใช้…" aria-label="ค้นหา"></label><span style="flex:1"></span>'+
+  '<button class="tb" data-k="theme" aria-label="'+(dark?"สลับเป็นโหมดสว่าง":"สลับเป็นโหมดมืด")+'" title="'+(dark?"โหมดสว่าง":"โหมดมืด")+'">'+(dark?"☀":"☾")+'</button>'+
+  '<div style="position:relative"><button class="tb" data-k="m:bell" aria-label="การแจ้งเตือน">🔔<span class="badge">3</span></button>'+(m==="bell"?'<div class="pop"><h4>การแจ้งเตือน</h4>'+notes.map(function(n){return '<div class="it" style="padding:8px;font-size:.85rem">'+n+'</div>'}).join("")+'<a class="it" href="#messages" style="color:var(--mfg)">ดูทั้งหมด</a></div>':'')+'</div>'+
+  '<div style="position:relative"><button class="tb" data-k="m:set" aria-label="ตั้งค่า">⚙</button>'+(m==="set"?'<div class="pop"><h4>ตั้งค่า</h4><div style="padding:6px 8px"><div class="sub">โหมดสี</div><div class="seg">'+[["light","☀ สว่าง"],["dark","☾ มืด"],["auto","ตามระบบ"]].map(function(x){return '<button data-k="tm:'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("")+'</div></div><div style="padding:6px 8px"><div class="sub">สีธีม</div><div class="dots">'+br.map(function(b){return '<button data-k="b:'+b+'" aria-label="ธีมสี'+b+'" aria-pressed="'+(cb===b)+'" style="background:'+bc[b]+'"></button>'}).join("")+'</div></div><button class="it" data-k="firebase">🔗 ตั้งค่า Firebase URL</button><div class="sub" style="padding:6px 8px">'+farmStatus+'</div></div>':'')+'</div>'+
+  '<div style="position:relative"><button class="tb" data-k="m:user" aria-label="เมนูผู้ใช้"><span class="av">สร</span></button>'+(m==="user"?'<div class="pop"><h4>เข้าสู่ระบบเป็นคุณสุริน</h4><a class="it" href="#profile">โปรไฟล์</a><a class="it" href="#devices">อุปกรณ์ของฉัน</a><button class="it warn" data-k="out">ออกจากระบบ</button></div>':'')+'</div>';
+}
+
+/* ---------- pages ---------- */
+function pDash(){
+  var zs=S.zones.filter(function(z){return !S.q||z.n.indexOf(S.q)>-1});
+  return '<div class="stack">'+
+  '<section class="welcome"><div style="max-width:520px"><h1>ยินดีต้อนรับกลับ คุณสุริน</h1><p>วันนี้ฟาร์มอยู่ในสภาพดี มี '+S.zones.filter(function(z){return z.m<40}).length+' แปลงที่ดินเริ่มแห้ง ควรรดน้ำภายในเย็นนี้</p><div class="wbox"><b>32°</b><div><div style="font-weight:500">อุณหภูมิภายนอก</div><div style="opacity:.8">ความชื้นสัมพัทธ์ 68%</div></div></div></div>'+ART+'</section>'+
+  '<div class="g3"><div class="stack">'+
+   '<section class="card"><div class="head"><h2>แปลงและโรงเรือน</h2><span class="sub">'+(S.q?'ผลค้นหา "'+S.q+'"':"ทุกแปลง")+'</span></div><div class="gz">'+
+   (zs.length?zs.map(function(z){var i=S.zones.indexOf(z);return '<div class="zone"><div class="r"><span class="zi" aria-hidden="true">'+z.i+'</span><h3>'+z.n+'</h3></div><div class="sub" style="display:flex;justify-content:space-between;margin-top:10px"><span>ความชื้นดิน '+z.m+'%</span>'+(z.m<40?'<span class="warn">ควรรดน้ำ</span>':'')+'</div><div class="bar"><i style="width:'+z.m+'%"></i></div><div class="sub" style="margin:10px 0 4px">ระบบรดน้ำ</div>'+sw("z:"+i,z.on,"ระบบรดน้ำ "+z.n)+'</div>'}).join(""):'<p class="sub">ไม่พบแปลงที่ค้นหา</p>')+'</div></section>'+
+   '<div><section class="card"><div class="head"><h2>อุปกรณ์ที่ใช้บ่อย</h2></div><div class="gz" style="gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">'+S.pop.map(function(d,i){return '<div class="dev"><div class="r"><b style="font-size:.74rem">'+d.n+'</b><span class="sub">'+(d.on?"เปิด":"ปิด")+'</span></div><div class="r" style="margin-top:10px"><span class="ic" aria-hidden="true">'+d.i+'</span>'+sw("p:"+i,d.on,d.n)+'</div></div>'}).join("")+'</div></section>'+
+   '</div>'+
+   '<section class="card irr"><div><div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:10px"><span class="chip">06:00 น.</span><span class="sub">ถึง</span><span class="chip">06:30 น.</span></div>'+gauge(S.irr)+'<div class="sub" style="display:flex;justify-content:space-between;margin-top:10px"><span>ปิด</span><span>100%</span></div><input type="range" id="irr" min="0" max="100" value="'+S.irr+'" aria-label="ระดับการให้น้ำ"></div><div><h3 class="sub" style="margin-bottom:8px">การใช้น้ำย้อนหลัง (ลิตร)</h3>'+lastBars()+'<div class="btns"><button data-k="go:devices">อุปกรณ์</button><button data-k="sc:ตารางงาน">ตารางงาน</button><button class="p" data-k="boost">รดน้ำทันที</button></div></div></section></div>'+
+  '<div class="stack"><section class="card"><div style="display:flex;justify-content:space-between"><div><h3>ระบบระบายอากาศโรงเรือน</h3><div class="big">'+(S.clim?"28°C":"ปิด")+'</div><div class="sub">'+(S.clim?"อุณหภูมิภายในโรงเรือน":"ระบบปิดอยู่")+'</div></div>'+sw("clim",S.clim,"ระบบระบายอากาศ")+'</div><div class="vbar"><i style="height:'+(S.clim?66:0)+'%"></i></div></section>'+
+   '</div></div>'+
+  '<section class="card"><div class="head"><h3>การใช้ทรัพยากร</h3></div>'+bars(260)+'</section>'+
+  '<div class="g2">'+radial("ความชื้นดินเฉลี่ย",57,"var(--brand)","เกณฑ์รดน้ำอัตโนมัติ 40%")+radial("น้ำในถังเก็บ",72,"var(--c1)","ต่ำกว่า 15% ระบบจะหยุดปั๊ม")+'</div></div>'
+}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function opt(items,selected){return items.map(function(x){return '<option value="'+esc(x)+'"'+(x===selected?' selected':'')+'>'+esc(x)+'</option>'}).join('')}
+function pManage(){
+ var zones=S.zones.map(function(z,i){return '<tr><td>'+esc(z.n)+'</td><td>'+esc(z.location||'-')+'</td><td>'+esc(z.m)+'%</td><td><button data-k="edit:zones:'+i+'">แก้ไข</button> <button data-k="del:zones:'+i+'">ลบ</button></td></tr>'}).join('');
+ var loc=S.locations.map(function(x,i){return '<tr><td>'+esc(x.n)+'</td><td><button data-k="edit:locations:'+i+'">แก้ไข</button> <button data-k="del:locations:'+i+'">ลบ</button></td></tr>'}).join('');
+ var dev=S.devs.map(function(d,i){return '<tr><td>'+esc(d.i)+' '+esc(d.n)+'</td><td>'+esc(d.z)+'</td><td>'+(d.on?'เปิด':'ปิด')+'</td><td><button data-k="edit:devs:'+i+'">แก้ไข</button> <button data-k="del:devs:'+i+'">ลบ</button></td></tr>'}).join('');
+ function section(title,key,head,body){return '<section class="card"><div class="head"><h2>'+title+'</h2><button class="manage-primary" data-k="add:'+key+'">+ เพิ่มใหม่</button></div><div class="manage-scroll"><table class="manage-table"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table></div></section>'}
+ return '<div class="stack"><div><h1>จัดการฟาร์ม</h1><p class="sub">เพิ่ม ลบ แก้ไขข้อมูล และซิงก์ Firebase แบบเรียลไทม์</p><p class="sub">'+esc(farmStatus)+'</p></div>'+section('สถานที่ / พื้นที่','locations','<th>ชื่อสถานที่</th><th>จัดการ</th>',loc)+section('แปลงผัก / โรงเรือน','zones','<th>ชื่อแปลง</th><th>สถานที่</th><th>ความชื้น</th><th>จัดการ</th>',zones)+section('อุปกรณ์','devs','<th>ชื่ออุปกรณ์</th><th>แปลงที่ติดตั้ง</th><th>สถานะ</th><th>จัดการ</th>',dev)+'</div>'
+}
+function farmEditor(kind,index){
+ var existing=index>=0,old=existing?S[kind][index]:{},title={locations:'สถานที่',zones:'แปลงผัก',devs:'อุปกรณ์'}[kind];
+ var field=function(label,name,value,type){return '<label class="manage-field">'+label+'<input name="'+name+'" type="'+(type||'text')+'" value="'+esc(value)+'" required></label>'};
+ var sel=function(label,name,values,value){return '<label class="manage-field">'+label+'<select name="'+name+'">'+opt(values,value)+'</select></label>'};
+ var fields=field('ชื่อ'+title,'n',old.n||'');
+ if(kind==='zones')fields+=sel('สถานที่','location',S.locations.map(function(x){return x.n}),old.location||'')+field('ความชื้นดิน (%)','m',old.m==null?50:old.m,'number')+field('ไอคอน','i',old.i||'🌱');
+ if(kind==='devs')fields+=sel('ติดตั้งที่แปลง','z',S.zones.map(function(x){return x.n}),old.z||'')+field('ไอคอน','i',old.i||'💧');
+ if((kind==='zones'&&!S.locations.length)||(kind==='devs'&&!S.zones.length)){toast('กรุณาเพิ่มสถานที่หรือแปลงผักก่อน');return}
+ var modal=document.createElement('div');modal.className='manage-overlay';modal.id='farm-modal';modal.innerHTML='<form id="farm-form" class="manage-dialog"><h2>'+(existing?'แก้ไข':'เพิ่ม')+title+'</h2>'+fields+(kind==='devs'?'<label class="manage-field"><span>สถานะเริ่มต้น</span><select name="on"><option value="false"'+(!old.on?' selected':'')+'>ปิด</option><option value="true"'+(old.on?' selected':'')+'>เปิด</option></select></label>':'')+'<div class="manage-actions"><button type="button" data-k="cancel-editor">ยกเลิก</button><button type="submit" class="manage-primary">บันทึกข้อมูล</button></div></form>';
+ document.body.appendChild(modal);modal.addEventListener('click',function(e){if(e.target===modal)modal.remove()});
+ modal.querySelector('form').addEventListener('submit',function(e){e.preventDefault();var fd=new FormData(e.currentTarget),name=String(fd.get('n')||'').trim();if(!name){toast('กรุณาระบุชื่อ');return}
+ var dup=S[kind].some(function(v,i){return i!==index&&v.n===name&&(kind!=='devs'||v.z===fd.get('z'))});if(dup){toast('มีรายการชื่อนี้แล้ว');return}
+ var item={n:name};if(kind==='zones'){var m=Number(fd.get('m'));if(!Number.isFinite(m)||m<0||m>100){toast('ความชื้นต้องอยู่ระหว่าง 0–100');return}item.m=m;item.location=String(fd.get('location'));item.i=String(fd.get('i')||'🌱');item.on=existing?!!old.on:true}
+ if(kind==='devs'){item.z=String(fd.get('z'));item.i=String(fd.get('i')||'💧');item.on=fd.get('on')==='true'}
+ if(existing){S[kind][index]=item;if(kind==='zones'&&old.n!==name)S.devs.forEach(function(d){if(d.z===old.n)d.z=name});if(kind==='locations'&&old.n!==name)S.zones.forEach(function(z){if(z.location===old.n)z.location=name})}else S[kind].push(item);
+ modal.remove();render();farmSave();toast('บันทึกข้อมูลแล้ว'+(farmReady?' (กำลังซิงก์)':' (ยังไม่เชื่อม Firebase)'))
+ });
+}
+function farmDelete(kind,index){var item=S[kind][index];if(!item)return;
+ if(kind==='locations'&&S.zones.some(function(z){return z.location===item.n})){toast('ย้ายหรือลบแปลงผักในสถานที่นี้ก่อน');return}
+ if(kind==='zones'&&S.devs.some(function(d){return d.z===item.n})){toast('ย้ายหรือลบอุปกรณ์ในแปลงนี้ก่อน');return}
+ if(!confirm('ยืนยันลบ '+item.n+'?'))return;S[kind].splice(index,1);render();farmSave();toast('ลบข้อมูลแล้ว')
+}
+function pDevices(){
+  var l=S.devs.filter(function(d){return !S.q||(d.n+d.z).indexOf(S.q)>-1});
+  return '<section class="card page"><h1>อุปกรณ์</h1><p>อุปกรณ์ทั้งหมดที่เชื่อมต่อกับฟาร์ม</p><div class="gz">'+(l.length?l.map(function(d){var i=S.devs.indexOf(d);return '<div class="inner"><div class="dev" style="background:none;box-shadow:none;padding:0"><div class="r"><div style="display:flex;gap:12px;align-items:center"><span class="ic" style="opacity:'+(d.on?1:.4)+'" aria-hidden="true">'+d.i+'</span><div><b>'+d.n+'</b><div class="sub">'+d.z+'</div></div></div>'+sw("d:"+i,d.on,d.n+" "+d.z)+'</div></div></div>'}).join(""):'<p class="sub">ไม่พบอุปกรณ์ที่ค้นหา</p>')+'</div></section>'
+}
+function pMsg(){
+  var t=[["ป","ปั๊มน้ำ โรงเรือน A","รดน้ำเสร็จแล้ว","2 นาที","อุปกรณ์"],["ถ","ถังเก็บน้ำ","ระดับน้ำเหลือ 20%","12 นาที","น้ำ"],["ไ","ไส้กรองน้ำ","ถึงเวลาเปลี่ยนในอีก 7 วัน","1 ชม.","ระบบ"],["ไ","ไฟเสริมแสง","เปิดตามโหมดพักแปลงกลางคืน","3 ชม.","ไฟ"]];
+  return '<section class="card page"><h1>แจ้งเตือน</h1><p>การแจ้งเตือนและเหตุการณ์ล่าสุดจากระบบฟาร์ม</p><ul class="list">'+t.map(function(x){return '<li><span class="av">'+x[0]+'</span><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><b>'+x[1]+'</b><span class="sub">'+x[3]+'</span></div><div class="sub" style="font-size:.85rem">'+x[2]+'</div></div><span class="tag">'+x[4]+'</span></li>'}).join("")+'</ul></section>'
+}
+function pStat(){return '<section class="card page"><h1>สถิติ</h1><p>การใช้น้ำ ปุ๋ย และไฟฟ้ารายเดือน</p><div class="inner">'+bars(340)+'</div></section>'}
+function pSec(){
+  var c=[["door","🔒","ประตูฟาร์ม","ประตูฟาร์มล็อกอยู่","ประตูฟาร์มไม่ได้ล็อก"],["cam","📷","กล้องวงจรปิด","กล้องทุกตัวกำลังบันทึก","หยุดบันทึกชั่วคราว"],["alarm","🔔","สัญญาณกันขโมย","เปิดระบบแล้ว","ปิดระบบอยู่"]];
+  return '<section class="card page"><h1>ความปลอดภัย</h1><p>กล้อง เซนเซอร์ และการแจ้งเตือนของฟาร์ม</p><div class="gz" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">'+c.map(function(x){return '<div class="inner"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+x[1]+' '+x[2]+'</b>'+sw("s:"+x[0],S.sec[x[0]],x[2])+'</div><div class="sub" style="margin-top:8px">'+(S.sec[x[0]]?x[3]:x[4])+'</div></div>'}).join("")+'</div><div class="inner" style="margin-top:18px"><b>กิจกรรมล่าสุด</b>'+[["08:32","ล็อกประตูฟาร์ม"],["07:15","กล้องหลังโรงเรือนตรวจพบการเคลื่อนไหว"],["เมื่อวาน","คุณสุรินปิดสัญญาณกันขโมย"]].map(function(e){return '<div class="ev"><span>'+e[1]+'</span><span class="sub">'+e[0]+'</span></div>'}).join("")+'</div></section>'
+}
+function pProf(){
+  return '<section class="card page"><h1>โปรไฟล์</h1><p>จัดการโปรไฟล์ การตั้งค่า และบัญชีของคุณ</p><div class="gz" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))"><div class="inner" style="display:flex;gap:12px;align-items:center"><span class="av" style="width:48px;height:48px">สร</span><div><b>สุริน ใจดี</b><div class="sub">surin@example.com</div></div></div>'+
+  '<div class="inner"><b>การตั้งค่า</b><div class="ev" style="align-items:center;padding:10px 0"><span>การแจ้งเตือน</span>'+sw("f:notif",S.prof.notif,"การแจ้งเตือน")+'</div><div class="ev" style="align-items:center"><span>โหมดประหยัดน้ำ</span>'+sw("f:water",S.prof.water,"โหมดประหยัดน้ำ")+'</div></div>'+
+  '</div></section>'
+}
+var VIEW={manage:pManage,dashboard:pDash,devices:pDevices,messages:pMsg,statistics:pStat,security:pSec,profile:pProf};
+
+var motionRoute=null;
+function render(focusK){
+  renderSide();renderTop();
+  var main=$("main"),st=main.scrollTop;
+  var currentRoute=route(), pageEl=$("page");
+  pageEl.innerHTML=VIEW[currentRoute]();
+  if(motionRoute!==currentRoute){motionRoute=currentRoute;pageEl.classList.remove("sf-enter");void pageEl.offsetWidth;pageEl.classList.add("sf-enter");}
+  main.scrollTop=st;
+  if(focusK){var e=document.querySelector('[data-k="'+focusK+'"]');if(e)e.focus({preventScroll:true})}
+  var q=$("q");if(q&&S.qf){q.focus();q.setSelectionRange(q.value.length,q.value.length)}
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-k]"),k=b&&b.dataset.k;
+  if(!b){if(S.menu&&!e.target.closest(".pop")){S.menu=null;renderTop()}if(S.mob&&e.target.id==="ov"){S.mob=false;renderSide()}return}
+  S.qf=false;
+  if(k==="col"){S.col=!S.col;render(k);return}
+  if(k==="mob"){if(window.matchMedia("(max-width:860px)").matches){S.mob=!S.mob;renderSide()}else{S.col=!S.col;renderSide()}return}
+  if(k.indexOf("m:")===0){var m=k.slice(2);S.menu=S.menu===m?null:m;renderTop();var n=document.querySelector('[data-k="'+k+'"]');if(n)n.focus();return}
+  if(k==="theme"){mode=dark?"light":"dark";saveMode();applyTheme();renderTop();return}
+  if(k.indexOf("tm:")===0){mode=k.slice(3);saveMode();applyTheme();renderTop();return}
+  if(k.indexOf("b:")===0){document.documentElement.setAttribute("data-brand",k.slice(2));renderTop();return}
+  if(k==="cancel-editor"){var md=$("farm-modal");if(md)md.remove();return}
+  if(k.indexOf("add:")===0){farmEditor(k.slice(4),-1);return}
+  if(k.indexOf("edit:")===0){var x=k.slice(5).split(":");farmEditor(x[0],Number(x[1]));return}
+  if(k.indexOf("del:")===0){var x=k.slice(4).split(":");farmDelete(x[0],Number(x[1]));return}
+  if(k==="firebase"){farmSetup();return}
+  if(k==="out"){S.menu=null;renderTop();toast("ออกจากระบบ (ตัวอย่าง)");return}
+  if(k.indexOf("go:")===0){location.hash=k.slice(3);return}
+  if(k.indexOf("sc:")===0){toast("เริ่มโหมด: "+k.slice(3));return}
+  if(k==="boost"){toast("สั่งรดน้ำทันที 10 วินาที");return}
+  var v,t=k.slice(2);
+  if(k==="clim")S.clim=!S.clim;
+  else if(k.indexOf("z:")===0){v=S.zones[+t];v.on=!v.on;toast(v.n+": "+(v.on?"เปิด":"ปิด")+"ระบบรดน้ำ")}
+  else if(k.indexOf("p:")===0){v=S.pop[+t];v.on=!v.on}
+  else if(k.indexOf("d:")===0){v=S.devs[+t];v.on=!v.on;toast(v.n+" "+v.z+": "+(v.on?"เปิด":"ปิด"))}
+  else if(k.indexOf("s:")===0)S.sec[t]=!S.sec[t];
+  else if(k.indexOf("f:")===0)S.prof[t]=!S.prof[t];
+  else return;
+  render(k);farmSave();
+});
+document.addEventListener("input",function(e){
+  if(e.target.id==="irr"){S.irr=+e.target.value;var r=85,c=2*Math.PI*r,a=270/360*c;$("garc").setAttribute("stroke-dashoffset",a-S.irr/100*a);$("gtxt").textContent=S.irr+"%";farmSave()}
+  if(e.target.id==="q"){S.q=e.target.value;S.qf=true;var p=route();if(p==="dashboard"||p==="devices"){$("page").innerHTML=VIEW[p]()}}
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(S.menu||S.mob)){S.menu=null;S.mob=false;render()}});
+window.addEventListener("hashchange",function(){S.mob=false;S.menu=null;S.q="";render();$("main").scrollTop=0});
+applyTheme();render();farmConnect();
+})();
+</script>
+</body>
+</html>
