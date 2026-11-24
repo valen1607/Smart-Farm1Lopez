@@ -222,6 +222,50 @@ aside{overflow:hidden;transition:width .42s cubic-bezier(.22,1,.36,1),transform 
 main{scrollbar-gutter:stable}
 }
 @media(max-width:860px){#side{width:230px;transform:translateX(-100%)}#side.mo{transform:translateX(0)}.ov,.ov.on{transition:opacity 480ms ease,visibility 480ms!important}}
+
+/* Overlay drawer: dashboard keeps its full width. */
+.frame{position:relative;isolation:isolate}
+#side,#side.c{position:absolute;top:0;bottom:0;left:0;width:min(260px,85vw);min-width:0;z-index:50;transform:translate3d(-105%,0,0);visibility:hidden;pointer-events:none;border-radius:24px 18px 18px 24px;box-shadow:12px 0 40px #0004;transition:transform .36s cubic-bezier(.22,1,.36,1),visibility 0s linear .36s!important}
+#side.mo{transform:translate3d(0,0,0);visibility:visible;pointer-events:auto;transition:transform .36s cubic-bezier(.22,1,.36,1),visibility 0s!important}
+#ov,#ov.on{display:block;position:absolute;inset:0;z-index:40;background:rgba(0,0,0,.24);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .36s ease,visibility 0s linear .36s!important}
+#ov.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .36s ease,visibility 0s!important}
+#main{width:100%;min-width:0;border-radius:inherit}
+#top .menu{display:grid}
+#side .brandrow{justify-content:space-between}
+#side .drawer-close{flex:none;background:#ffffff15;color:white;border:0;border-radius:10px;width:34px;height:34px;font-size:22px;line-height:1}
+#side .logo{min-width:0;width:auto}
+@media(max-width:860px){#side{border-radius:0 18px 18px 0}}
+@media(prefers-reduced-motion:reduce){#side,#side.mo,#ov,#ov.on{transition:none!important}}
+
+/* Drawer motion: fixed layout, reversible compositor transitions. */
+#side,#side.c{transform:translate3d(-108%,0,0);opacity:0;visibility:hidden;transition:transform 440ms cubic-bezier(.4,0,.2,1),opacity 300ms ease,visibility 0s linear 440ms!important;will-change:transform,opacity}
+#side.mo{transform:translate3d(0,0,0);opacity:1;visibility:visible;transition:transform 440ms cubic-bezier(.22,1,.36,1),opacity 220ms ease,visibility 0s!important}
+#ov,#ov.on{backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);transition:opacity 440ms ease,visibility 0s linear 440ms!important}
+#ov.on{transition:opacity 440ms ease,visibility 0s!important}
+#side nav a{opacity:0;translate:-12px 0;transition:opacity 180ms ease,translate 220ms ease,background 180ms ease!important}
+#side.mo nav a{opacity:1;translate:0 0;transition-delay:90ms,90ms,0ms!important}
+#side .drawer-close{transition:background 180ms ease,transform 180ms ease!important}
+#side .drawer-close:hover{background:#ffffff28;transform:rotate(12deg)}
+@media(prefers-reduced-motion:reduce){#side,#side.mo,#ov,#ov.on,#side nav a{transition:none!important}}
+
+/* Drawer-specific motion, independent of legacy layout rules. */
+#side,#side.c,#side.mo{display:flex!important;visibility:visible!important;transition:transform 520ms cubic-bezier(.25,.8,.25,1)!important;opacity:1!important;animation:none!important}
+#side,#side.c{transform:translate3d(-110%,0,0)!important;pointer-events:none}
+#side.mo{transform:translate3d(0,0,0)!important;pointer-events:auto}
+#ov,#ov.on{display:block!important;visibility:visible!important;transition:opacity 520ms ease!important;animation:none!important}
+#ov{opacity:0!important;pointer-events:none}
+#ov.on{opacity:1!important;pointer-events:auto}
+#side nav a,#side.mo nav a{opacity:1!important;translate:none!important}
+
+/* Switch motion: animate the thumb and track on every state change. */
+#page .sw{transition:background-color .32s ease,transform .18s ease,box-shadow .32s ease!important;}
+#page .sw::after{transition:transform .36s cubic-bezier(.22,1,.36,1),background-color .32s ease!important;}
+#page .sw:active{transform:scale(.94)}
+#page .sw:hover{box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 15%,transparent)}
+
+
+#page button.sw {transition:background-color .45s ease,box-shadow .25s ease,transform .18s ease!important;}
+#page button.sw::after {transition:transform .45s cubic-bezier(.22,.8,.25,1),background-color .45s ease!important;}
 </style>
 </head>
 <body>
@@ -306,15 +350,15 @@ var ART='<svg viewBox="0 0 400 260" role="img" aria-label="ภาพประก
 function renderSide(){
   var cur=route(),a=$("side");
   a.className=(S.col?"c ":"")+(S.mob?"mo":"");
-  if(a.dataset.route!==cur){a.dataset.route=cur; a.innerHTML='<div class="brandrow"><div class="logo"><i>🌱</i><span>Smart Farm</span></div></div><nav>'+
+  if(a.dataset.route!==cur){a.dataset.route=cur; a.innerHTML='<div class="brandrow"><div class="logo"><i>🌱</i><span>Smart Farm</span></div><button class="drawer-close" data-k="mob" aria-label="ปิดเมนู">×</button></div><nav>'+
   PAGES.map(function(p){return '<a href="#'+p[0]+'" title="'+p[1]+'"'+(p[0]===cur?' class="on" aria-current="page"':'')+'><span aria-hidden="true">'+p[2]+'</span><span class="t">'+p[1]+'</span></a>'}).join("")+
   '</nav><div class="tip">'+'ดูแลฟาร์มได้ง่ายๆ จากที่เดียว</div>';}
-  $("ov").className="ov"+(S.mob?" on":"");
+  $("ov").className="ov"+(S.mob?" on":""); var toggle=$("top").querySelector('[data-k="mob"]');if(toggle)toggle.setAttribute("aria-expanded",String(S.mob));
 }
 function renderTop(){
   var m=S.menu,notes=["รดน้ำโรงเรือน A เสร็จแล้ว","ล็อกประตูฟาร์มแล้ว","ถึงเวลาเปลี่ยนไส้กรองน้ำ"];
   var br=["black","blue","teal","orange","pink"],bc={black:"#18181b",blue:"#2f6feb",teal:"#14a39a",orange:"#f08a1c",pink:"#e0589f"},cb=document.documentElement.getAttribute("data-brand");
-  $("top").innerHTML='<button class="tb menu" data-k="mob" aria-label="สลับการแสดงเมนูด้านข้าง" aria-controls="side">☰</button><label class="search"><span>🔍</span><input id="q" value="'+S.q+'" placeholder="ค้นหาแปลง อุปกรณ์ หรือผู้ใช้…" aria-label="ค้นหา"></label><span style="flex:1"></span>'+
+  $("top").innerHTML='<button class="tb menu" data-k="mob" aria-label="สลับการแสดงเมนูด้านข้าง" aria-controls="side" aria-expanded="'+S.mob+'">☰</button><label class="search"><span>🔍</span><input id="q" value="'+S.q+'" placeholder="ค้นหาแปลง อุปกรณ์ หรือผู้ใช้…" aria-label="ค้นหา"></label><span style="flex:1"></span>'+
   '<button class="tb" data-k="theme" aria-label="'+(dark?"สลับเป็นโหมดสว่าง":"สลับเป็นโหมดมืด")+'" title="'+(dark?"โหมดสว่าง":"โหมดมืด")+'">'+(dark?"☀":"☾")+'</button>'+
   '<div style="position:relative"><button class="tb" data-k="m:bell" aria-label="การแจ้งเตือน">🔔<span class="badge">3</span></button>'+(m==="bell"?'<div class="pop"><h4>การแจ้งเตือน</h4>'+notes.map(function(n){return '<div class="it" style="padding:8px;font-size:.85rem">'+n+'</div>'}).join("")+'<a class="it" href="#messages" style="color:var(--mfg)">ดูทั้งหมด</a></div>':'')+'</div>'+
   '<div style="position:relative"><button class="tb" data-k="m:set" aria-label="ตั้งค่า">⚙</button>'+(m==="set"?'<div class="pop"><h4>ตั้งค่า</h4><div style="padding:6px 8px"><div class="sub">โหมดสี</div><div class="seg">'+[["light","☀ สว่าง"],["dark","☾ มืด"],["auto","ตามระบบ"]].map(function(x){return '<button data-k="tm:'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("")+'</div></div><div style="padding:6px 8px"><div class="sub">สีธีม</div><div class="dots">'+br.map(function(b){return '<button data-k="b:'+b+'" aria-label="ธีมสี'+b+'" aria-pressed="'+(cb===b)+'" style="background:'+bc[b]+'"></button>'}).join("")+'</div></div><div class="firebase-settings"><b>Firebase Realtime Database</b><div class="sub">วางลิงก์ Database URL</div><input id="firebase-url" type="url" aria-label="Firebase Database URL" placeholder="https://...firebasedatabase.app"><button data-k="firebase">บันทึกและเชื่อมต่อ</button><div class="sub" style="margin-top:8px">'+farmStatus+'</div></div></div>':'')+'</div>'+
@@ -395,7 +439,24 @@ function render(focusK){
   renderSide();renderTop();
   var main=$("main"),st=main.scrollTop;
   var currentRoute=route(), pageEl=$("page");
-  pageEl.innerHTML=VIEW[currentRoute]();
+  var template=document.createElement('template');
+  template.innerHTML=VIEW[currentRoute]();
+  function patch(parent, fresh){
+    var i=0;
+    while(i<fresh.childNodes.length){
+      var n=fresh.childNodes[i], o=parent.childNodes[i];
+      if(!o){parent.appendChild(n.cloneNode(true));i++;continue;}
+      if(o.nodeType!==n.nodeType||o.nodeName!==n.nodeName||(o.nodeType===1&&o.getAttribute('data-k')!==n.getAttribute('data-k'))){parent.replaceChild(n.cloneNode(true),o);i++;continue;}
+      if(o.nodeType===3){if(o.nodeValue!==n.nodeValue)o.nodeValue=n.nodeValue;}
+      else if(o.nodeType===1){
+        Array.from(o.attributes).forEach(function(a){if(!n.hasAttribute(a.name))o.removeAttribute(a.name)});
+        Array.from(n.attributes).forEach(function(a){if(o.getAttribute(a.name)!==a.value)o.setAttribute(a.name,a.value)});
+        patch(o,n);
+      } i++;
+    }
+    while(parent.childNodes.length>fresh.childNodes.length)parent.lastChild.remove();
+  }
+  if(motionRoute===currentRoute)patch(pageEl,template.content);else pageEl.replaceChildren(template.content);
   if(motionRoute!==currentRoute){motionRoute=currentRoute;pageEl.classList.remove("sf-enter");void pageEl.offsetWidth;pageEl.classList.add("sf-enter");}
   main.scrollTop=st;
   if(focusK){var e=document.querySelector('[data-k="'+focusK+'"]');if(e)e.focus({preventScroll:true})}
@@ -405,10 +466,10 @@ function render(focusK){
 /* ---------- events ---------- */
 document.addEventListener("click",function(e){
   var b=e.target.closest("[data-k]"),k=b&&b.dataset.k;
-  if(!b){if(S.menu&&!e.target.closest(".pop")){S.menu=null;renderTop()}if(S.mob&&e.target.id==="ov"){S.mob=false;renderSide()}return}
+  if(!b){if(S.menu&&!e.target.closest(".pop")){S.menu=null;renderTop()}if(S.mob&&(e.target.id==="ov"||e.target.closest("#side nav a"))){S.mob=false;renderSide()}return}
   S.qf=false;
   if(k==="col"){S.col=!S.col;render(k);return}
-  if(k==="mob"){var side=$("side");void side.offsetWidth;if(window.matchMedia("(max-width:860px)").matches){S.mob=!S.mob}else{S.col=!S.col}renderSide();b.setAttribute("aria-expanded",String(window.matchMedia("(max-width:860px)").matches?S.mob:!S.col));return}
+  if(k==="mob"){S.col=false;S.mob=!S.mob;S.menu=null;renderSide();renderTop();if(S.mob){var close=$('side').querySelector('.drawer-close');if(close)close.focus({preventScroll:true})}else{var toggle=$('top').querySelector('[data-k="mob"]');if(toggle)toggle.focus({preventScroll:true})}return}
   if(k.indexOf("m:")===0){var m=k.slice(2);S.menu=S.menu===m?null:m;renderTop();var n=document.querySelector('[data-k="'+k+'"]');if(n)n.focus();return}
   if(k==="theme"){mode=dark?"light":"dark";saveMode();applyTheme();renderTop();return}
   if(k.indexOf("tm:")===0){mode=k.slice(3);saveMode();applyTheme();renderTop();return}
