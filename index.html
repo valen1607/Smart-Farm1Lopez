@@ -266,10 +266,70 @@ main{scrollbar-gutter:stable}
 
 #page button.sw {transition:background-color .45s ease,box-shadow .25s ease,transform .18s ease!important;}
 #page button.sw::after {transition:transform .45s cubic-bezier(.22,.8,.25,1),background-color .45s ease!important;}
+
+/* Full viewport layout and bottom management navigation */
+html,body{width:100%;height:100%;margin:0;overflow:hidden}
+.shell{width:100%;max-width:none;margin:0;padding:0}
+.frame{width:100%;height:100vh;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0;border-radius:0;box-shadow:none}
+#main{border-radius:0;min-height:0}
+#side,#side.c{border-radius:0 18px 18px 0}
+#side nav a[href="#manage"]{margin-top:auto;border-top:1px solid rgba(255,255,255,.14);flex-shrink:0}
+#side nav a{flex-shrink:0}
+
+/* Animated login lights and interactive buttons */
+#loginGate .loginBeam{height:3px;width:65vw;animation:neonSweep var(--speed) linear infinite;animation-delay:var(--delay);will-change:transform,opacity}
+@keyframes neonSweep{0%{transform:translate3d(0,18vh,0) rotate(-24deg);opacity:0}15%{opacity:.9}65%{opacity:.8}100%{transform:translate3d(185vw,-30vh,0) rotate(-24deg);opacity:0}}
+#loginGate .loginLights::after{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent 0%,#35efaa20 12%,transparent 28%,#368bff18 48%,transparent 65%);animation:neonOrbit 18s linear infinite;pointer-events:none}
+@keyframes neonOrbit{to{transform:rotate(360deg)}}
+#loginGate #loginSubmit{isolation:isolate;transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,filter .28s!important;box-shadow:0 4px 18px #49e8a333}
+#loginSubmit::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 30%,#ffffff88 50%,transparent 70%);transform:translateX(-120%);animation:buttonShine 3.2s ease-in-out infinite}
+@keyframes buttonShine{0%,25%{transform:translateX(-120%)}65%,100%{transform:translateX(120%)}}
+#loginGate #loginSubmit:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 32px #49e8a366;filter:brightness(1.08)}
+#loginGate #loginSubmit:active:not(:disabled){transform:scale(.95)}
+#loginGate #showPass{transition:transform .24s,background .24s,box-shadow .24s!important}#loginGate #showPass:hover{background:#43564e;box-shadow:0 0 14px #49e8a333}#loginGate #showPass:active{transform:scale(.94)}
+@media(prefers-reduced-motion:reduce){#loginGate .loginBeam,#loginGate .loginLights::after,#loginSubmit::after{animation:none!important}#loginGate #loginSubmit,#loginGate #showPass{transition:none!important}}
 </style>
+<style>
+#loginGate{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 0,#263b34,#101115 65%);color:#f4f4f5}#loginGate[hidden],.shell[hidden]{display:none!important}.loginCard{width:min(100%,410px);padding:32px;border:1px solid #383d43;border-radius:24px;background:#1b1e23;box-shadow:0 24px 80px #0006;animation:loginEnter .45s ease both}.loginCard h1{margin:12px 0 4px;font-size:26px}.loginCard p{color:#a1a1aa}.loginCard label{display:block;margin:18px 0 6px}.loginCard input{width:100%;padding:13px;border:1px solid #41454c;border-radius:10px;background:#111318;color:white}.loginCard button{border:0;border-radius:10px;padding:12px;background:#e9f5ec;color:#14251b;font-weight:600}.loginCard button[type=submit]{width:100%;margin-top:22px}.loginCard button:disabled{opacity:.5}.loginPass{display:flex;gap:8px}.loginPass input{min-width:0}.loginPass button{white-space:nowrap;background:#34383e;color:white}#loginMsg{min-height:24px;color:#fca5a5;font-size:13px;margin-top:12px}@keyframes loginEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.loginCard{animation:none}}
+</style>
+<style>
+#loginGate{overflow:auto;isolation:isolate;background:#101315;transition:opacity .42s ease,transform .42s cubic-bezier(.22,1,.36,1)}
+#loginGate::before,#loginGate::after{content:"";position:fixed;z-index:-1;pointer-events:none;width:65vmax;height:65vmax;border-radius:50%;filter:blur(75px);opacity:.45;animation:aurora 12s ease-in-out infinite alternate}
+#loginGate::before{background:radial-gradient(circle,#27634c,transparent 65%);top:-35vmax;left:-15vmax}
+#loginGate::after{background:radial-gradient(circle,#28475b,transparent 65%);bottom:-38vmax;right:-12vmax;animation-delay:-6s}
+#loginGate .loginCard{position:relative;background:linear-gradient(145deg,#20282aee,#15191fee);border:1px solid #ffffff24;box-shadow:0 30px 100px #0008,0 0 50px #54d49a0d;backdrop-filter:blur(18px);animation:cardArrival .85s cubic-bezier(.16,1,.3,1) both}
+.loginCard>div:first-child{display:grid;place-items:center;width:64px;height:64px;border-radius:20px;background:#8cf0b719;border:1px solid #8cf0b733;animation:logoFloat 3.5s ease-in-out infinite}
+.loginCard h1{letter-spacing:-.6px}.loginCard input{transition:border-color .25s,box-shadow .25s,background .25s!important}.loginCard input:focus{outline:none;border-color:#75d9a4;box-shadow:0 0 0 4px #75d9a420;background:#18211e}
+#loginSubmit{position:relative;overflow:hidden;background:linear-gradient(110deg,#b3f3cd,#72d9a3);transition:transform .22s,box-shadow .22s!important}#loginSubmit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px #72d9a344}#loginSubmit:active:not(:disabled){transform:scale(.97)}
+#loginSubmit.busy::before{content:"";display:inline-block;width:13px;height:13px;border:2px solid #163c2860;border-top-color:#163c28;border-radius:50%;margin-right:10px;vertical-align:-2px;animation:loginSpin .7s linear infinite}
+#loginGate.leaving{opacity:0;transform:scale(1.025);pointer-events:none}.loginCard.loginError{animation:loginShake .42s ease both!important}
+@keyframes cardArrival{from{opacity:0;transform:translateY(34px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes aurora{to{transform:translate(12vmax,8vmax) scale(1.2)}}@keyframes logoFloat{50%{transform:translateY(-5px)}}@keyframes loginSpin{to{transform:rotate(360deg)}}@keyframes loginShake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@media(prefers-reduced-motion:reduce){#loginGate,#loginGate *,#loginGate::before,#loginGate::after{animation:none!important;transition:none!important}}
+</style>
+<style>
+/* Login cinematic moving light trails */
+#loginGate{background:radial-gradient(ellipse at 50% 45%,#142821 0%,#090e12 58%,#05070a 100%)}
+.loginLights{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1;isolation:isolate}
+.loginLights::before{content:"";position:absolute;inset:0;background:linear-gradient(#8cf0b70b 1px,transparent 1px),linear-gradient(90deg,#8cf0b70b 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse,#000 10%,transparent 85%)}
+.loginBeam{position:absolute;left:-65vw;top:var(--y);width:55vw;height:2px;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,var(--tone),#eafff6,transparent);box-shadow:0 0 12px var(--tone),0 0 35px var(--tone);opacity:0;animation:loginBeamRun var(--speed) linear infinite;animation-delay:var(--delay)}
+.loginBeam::after{content:"";position:absolute;inset:-20px 0;background:inherit;filter:blur(22px);opacity:.55}
+@keyframes loginBeamRun{0%{transform:translate3d(0,30vh,0) rotate(-24deg);opacity:0}12%{opacity:.85}78%{opacity:.7}100%{transform:translate3d(175vw,-48vh,0) rotate(-24deg);opacity:0}}
+#loginGate .loginCard{z-index:1;background:linear-gradient(145deg,#182522e8,#11171eea);border-color:#8cf0b73b;box-shadow:0 30px 100px #0009,0 0 65px #45e9a21c}
+@media(prefers-reduced-motion:reduce){.loginBeam{animation:none!important;opacity:.18;left:10vw;transform:rotate(-24deg)}}
+</style>
+<style>
+#loginGate{background:#050a0f url("stars-background.gif") center center / cover no-repeat !important;}
+#loginGate .loginLights,#loginGate::before,#loginGate::after{display:none!important}
+#loginGate .loginCard{background:linear-gradient(145deg,#182522e8,#11171eea);}
+</style>
+<style>
+#loginGate{background:#050a0f!important;isolation:isolate} #loginGate .loginGifBackground{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1;display:block} #loginGate .loginCard{position:relative;z-index:2;background:rgba(15,20,27,.72);backdrop-filter:blur(8px)}
+</style>
+<style>#loginGate .loginGifBackground{display:block!important;opacity:1!important;filter:none!important} #loginGate .loginCard{background:rgba(15,16,20,.68)!important}</style>
 </head>
 <body>
-<div class="shell"><div class="frame">
+<div id="loginGate"><img class="loginGifBackground" src="stars-background.gif" alt="" aria-hidden="true" referrerpolicy="no-referrer"><div class="loginLights" aria-hidden="true"><i class="loginBeam" style="--y:15%;--tone:#45e9a2;--speed:7s;--delay:-1s"></i><i class="loginBeam" style="--y:38%;--tone:#36b9ff;--speed:9s;--delay:-4s"></i><i class="loginBeam" style="--y:62%;--tone:#68ffc2;--speed:8s;--delay:-6s"></i><i class="loginBeam" style="--y:85%;--tone:#437dff;--speed:10s;--delay:-2s"></i><i class="loginBeam" style="--y:105%;--tone:#45e9a2;--speed:6s;--delay:-4s"></i><i class="loginBeam" style="--y:125%;--tone:#36b9ff;--speed:11s;--delay:-8s"></i></div><form class="loginCard" id="loginForm"><div style="font-size:34px">🌱</div><h1>Smart Farm</h1><p>เข้าสู่ระบบเพื่อจัดการฟาร์มของคุณ</p><label for="loginEmail">อีเมล</label><input id="loginEmail" type="email" autocomplete="username" required><label for="loginPassword">รหัสผ่าน</label><div class="loginPass"><input id="loginPassword" type="password" autocomplete="current-password" required><button id="showPass" type="button">แสดง</button></div><button id="loginSubmit" type="submit" disabled>เข้าสู่ระบบ</button><div id="loginMsg" role="status">กำลังตรวจสอบบัญชี...</div></form></div><div class="shell" hidden><div class="frame">
   <aside id="side" aria-label="เมนูหลัก"></aside>
   <div class="ov" id="ov"></div>
   <main id="main"><div class="top" id="top"></div><div id="page"></div></main>
@@ -278,10 +338,11 @@ main{scrollbar-gutter:stable}
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
-var PAGES=[["manage","จัดการฟาร์ม","✎"],["dashboard","หน้าแรก","⌂"],["messages","แจ้งเตือน","🔔"],["statistics","สถิติ","▥"],["security","ความปลอดภัย","🛡"],["devices","อุปกรณ์","⚙"],["profile","โปรไฟล์","☺"]];
+var PAGES=[["dashboard","หน้าแรก","⌂"],["messages","แจ้งเตือน","🔔"],["statistics","สถิติ","▥"],["security","ความปลอดภัย","🛡"],["devices","อุปกรณ์","⚙"],["profile","โปรไฟล์","☺"],["manage","จัดการฟาร์ม","✎"]];
 var S={col:false,mob:false,menu:null,q:"",irr:65,clim:true,
  zones:[["โรงเรือน A",52,"🏠"],["โรงเรือน B",38,"🏠"],["โรงเรือน C",61,"🏠"],["แปลงกลางแจ้ง 1",47,"☀"],["แปลงกลางแจ้ง 2",66,"☀"],["แปลงผักสวนครัว",44,"🌱"]].map(function(z){return{n:z[0],m:z[1],i:z[2],on:true}}),
  pop:[["ปั๊มน้ำ","💧",false],["พัดลมระบายอากาศ","🌀",false],["ไฟเสริมแสง","💡",false],["วาล์วหมอกน้ำ","🌧",false]].map(function(d){return{n:d[0],i:d[1],on:d[2]}}),
@@ -298,8 +359,7 @@ function farmSave(){if(!farmReady||farmApplying)return;clearTimeout(farmTimer);f
 function farmConnect(){
  try{
   if(!window.firebase)throw Error('โหลด Firebase SDK ไม่สำเร็จ');
-  if(firebase.apps.length)firebase.app().delete().catch(function(){});
-  var app=firebase.initializeApp(firebaseConfig,'farm-'+Date.now());farmDb=app.database();farmReady=false;
+  farmDb=farmApp.database();farmReady=false;
   farmDb.ref('smartfarm/dashboard').on('value',function(snap){
     var v=snap.val();farmApplying=true;
     if(v){['zones','locations','pop','devs'].forEach(function(k){if(Array.isArray(v[k]))S[k]=v[k]});
@@ -479,7 +539,7 @@ document.addEventListener("click",function(e){
   if(k.indexOf("edit:")===0){var x=k.slice(5).split(":");farmEditor(x[0],Number(x[1]));return}
   if(k.indexOf("del:")===0){var x=k.slice(4).split(":");farmDelete(x[0],Number(x[1]));return}
   if(k==="firebase"){farmSetup();return}
-  if(k==="out"){S.menu=null;renderTop();toast("ออกจากระบบ (ตัวอย่าง)");return}
+  if(k==="out"){farmAuth.signOut().catch(function(){toast("ออกจากระบบไม่สำเร็จ")});return}
   if(k.indexOf("go:")===0){location.hash=k.slice(3);return}
   if(k.indexOf("sc:")===0){toast("เริ่มโหมด: "+k.slice(3));return}
   if(k==="boost"){toast("สั่งรดน้ำทันที 10 วินาที");return}
@@ -499,7 +559,15 @@ document.addEventListener("input",function(e){
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(S.menu||S.mob)){S.menu=null;S.mob=false;render()}});
 window.addEventListener("hashchange",function(){S.mob=false;S.menu=null;S.q="";render();$("main").scrollTop=0});
-applyTheme();render();farmConnect();
+var farmApp,farmAuth,activeUser=null;
+applyTheme();render();
+$("showPass").onclick=function(){var p=$("loginPassword");p.type=p.type==="password"?"text":"password";this.textContent=p.type==="password"?"แสดง":"ซ่อน"};
+try{farmApp=firebase.initializeApp(firebaseConfig);farmAuth=farmApp.auth();
+farmAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function(){
+$("loginForm").onsubmit=async function(e){e.preventDefault();$("loginSubmit").disabled=true;$("loginSubmit").classList.add("busy");$("loginMsg").textContent="กำลังเข้าสู่ระบบ...";try{await farmAuth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value);$("loginPassword").value=""}catch(err){var card=$("loginForm");card.classList.remove("loginError");void card.offsetWidth;card.classList.add("loginError");$("loginMsg").textContent="เข้าสู่ระบบไม่สำเร็จ: ตรวจสอบอีเมล รหัสผ่าน และการตั้งค่า Firebase"}finally{$("loginSubmit").classList.remove("busy");$("loginSubmit").disabled=false}};
+farmAuth.onAuthStateChanged(function(user){if(user){if(activeUser===user.uid)return;activeUser=user.uid;var gate=$("loginGate");gate.classList.add("leaving");setTimeout(function(){if(activeUser!==user.uid)return;gate.hidden=true;document.querySelector(".shell").hidden=false;farmConnect()},window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:430)}else{clearTimeout(farmTimer);farmReady=false;if(farmDb)farmDb.ref('smartfarm/dashboard').off();if(activeUser){location.reload();return}$("loginGate").hidden=false;document.querySelector(".shell").hidden=true;$("loginSubmit").disabled=false;$("loginMsg").textContent=""}});
+}).catch(function(e){$("loginMsg").textContent="ตั้งค่าการเข้าสู่ระบบไม่สำเร็จ: "+e.message});}catch(e){$("loginMsg").textContent="โหลด Firebase ไม่สำเร็จ: "+e.message}
+
 })();
 </script>
 </body>
