@@ -206,6 +206,22 @@ aside{overflow:hidden;transition:width .42s cubic-bezier(.22,1,.36,1),transform 
 }
 @media(max-width:860px){.ov,.ov.on{display:block;opacity:0;visibility:hidden;pointer-events:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40;transition:opacity .35s ease,visibility .35s}.ov.on{opacity:1;visibility:visible;pointer-events:auto}}
 @media(prefers-reduced-motion:reduce){aside,aside *, .ov{transition:none!important}}
+
+.firebase-settings{padding:10px 8px;border-top:1px solid var(--bd);margin-top:8px}.firebase-settings input{width:100%;min-width:0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);padding:9px;margin:8px 0;font-size:12px}.firebase-settings button{width:100%;border:0;border-radius:8px;background:var(--brand);color:var(--onbrand);padding:9px}.firebase-settings .sub{overflow-wrap:anywhere}.pop:has(.firebase-settings){width:min(340px,85vw)}
+/* Single authoritative sidebar motion */
+#side{overflow:hidden;transition:width 480ms cubic-bezier(.4,0,.2,1),transform 480ms cubic-bezier(.4,0,.2,1)!important}
+@media(min-width:861px){
+#side{width:244px;flex:0 0 auto;min-width:0}
+#side.c{width:84px}
+#side .brandrow,#side.c .brandrow{padding:18px 19px;min-height:88px;justify-content:flex-start}
+#side .logo,#side.c .logo{width:206px;min-width:206px;justify-content:flex-start}
+#side nav,#side.c nav{padding:10px 12px;overflow-x:hidden}
+#side nav a,#side.c nav a{padding:0 17px;gap:14px;height:48px;min-height:48px;justify-content:flex-start}
+#side .t,#side .logo span,#side .tip{display:block!important;white-space:nowrap;opacity:1;transform:translateX(0);transition:opacity 280ms ease,transform 400ms ease!important}
+#side.c .t,#side.c .logo span,#side.c .tip{opacity:0;transform:translateX(-12px)}
+main{scrollbar-gutter:stable}
+}
+@media(max-width:860px){#side{width:230px;transform:translateX(-100%)}#side.mo{transform:translateX(0)}.ov,.ov.on{transition:opacity 480ms ease,visibility 480ms!important}}
 </style>
 </head>
 <body>
@@ -251,7 +267,7 @@ function farmConnect(){
   },function(err){farmReady=false;farmStatus='🔴 '+err.message;renderTop();toast(farmStatus)});
  }catch(e){farmReady=false;farmStatus='🔴 '+e.message;renderTop();toast(farmStatus)}
 }
-function farmSetup(){var url=prompt('Realtime Database URL (ตรวจสอบจาก Firebase Console)',firebaseConfig.databaseURL);if(!url)return;firebaseConfig.databaseURL=url.trim().replace(/\/$/,'');try{localStorage.setItem('smartfarm-db-url',firebaseConfig.databaseURL)}catch(e){};location.reload()}
+function farmSetup(){var field=$("firebase-url"),url=field&&field.value.trim();if(!url)return toast("กรุณาใส่ Firebase URL");try{var u=new URL(url);if(u.protocol!=="https:"||!/(\.firebaseio\.com|\.firebasedatabase\.app)$/.test(u.hostname)||u.pathname!=="/"||u.search||u.hash||u.username||u.password||u.port)throw Error();url=u.origin}catch(e){return toast("กรุณาใช้ URL หลักของ Realtime Database")};try{localStorage.setItem("smartfarm-db-url",url)}catch(e){return toast("ไม่สามารถบันทึกการตั้งค่าได้")};location.reload()}
 var mq=window.matchMedia?matchMedia("(prefers-color-scheme:dark)"):{matches:false};
 var mode="auto";try{mode=localStorage.getItem("sf-theme")||"auto"}catch(e){}
 var dark=false;
@@ -301,8 +317,9 @@ function renderTop(){
   $("top").innerHTML='<button class="tb menu" data-k="mob" aria-label="สลับการแสดงเมนูด้านข้าง" aria-controls="side">☰</button><label class="search"><span>🔍</span><input id="q" value="'+S.q+'" placeholder="ค้นหาแปลง อุปกรณ์ หรือผู้ใช้…" aria-label="ค้นหา"></label><span style="flex:1"></span>'+
   '<button class="tb" data-k="theme" aria-label="'+(dark?"สลับเป็นโหมดสว่าง":"สลับเป็นโหมดมืด")+'" title="'+(dark?"โหมดสว่าง":"โหมดมืด")+'">'+(dark?"☀":"☾")+'</button>'+
   '<div style="position:relative"><button class="tb" data-k="m:bell" aria-label="การแจ้งเตือน">🔔<span class="badge">3</span></button>'+(m==="bell"?'<div class="pop"><h4>การแจ้งเตือน</h4>'+notes.map(function(n){return '<div class="it" style="padding:8px;font-size:.85rem">'+n+'</div>'}).join("")+'<a class="it" href="#messages" style="color:var(--mfg)">ดูทั้งหมด</a></div>':'')+'</div>'+
-  '<div style="position:relative"><button class="tb" data-k="m:set" aria-label="ตั้งค่า">⚙</button>'+(m==="set"?'<div class="pop"><h4>ตั้งค่า</h4><div style="padding:6px 8px"><div class="sub">โหมดสี</div><div class="seg">'+[["light","☀ สว่าง"],["dark","☾ มืด"],["auto","ตามระบบ"]].map(function(x){return '<button data-k="tm:'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("")+'</div></div><div style="padding:6px 8px"><div class="sub">สีธีม</div><div class="dots">'+br.map(function(b){return '<button data-k="b:'+b+'" aria-label="ธีมสี'+b+'" aria-pressed="'+(cb===b)+'" style="background:'+bc[b]+'"></button>'}).join("")+'</div></div><button class="it" data-k="firebase">🔗 ตั้งค่า Firebase URL</button><div class="sub" style="padding:6px 8px">'+farmStatus+'</div></div>':'')+'</div>'+
+  '<div style="position:relative"><button class="tb" data-k="m:set" aria-label="ตั้งค่า">⚙</button>'+(m==="set"?'<div class="pop"><h4>ตั้งค่า</h4><div style="padding:6px 8px"><div class="sub">โหมดสี</div><div class="seg">'+[["light","☀ สว่าง"],["dark","☾ มืด"],["auto","ตามระบบ"]].map(function(x){return '<button data-k="tm:'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("")+'</div></div><div style="padding:6px 8px"><div class="sub">สีธีม</div><div class="dots">'+br.map(function(b){return '<button data-k="b:'+b+'" aria-label="ธีมสี'+b+'" aria-pressed="'+(cb===b)+'" style="background:'+bc[b]+'"></button>'}).join("")+'</div></div><div class="firebase-settings"><b>Firebase Realtime Database</b><div class="sub">วางลิงก์ Database URL</div><input id="firebase-url" type="url" aria-label="Firebase Database URL" placeholder="https://...firebasedatabase.app"><button data-k="firebase">บันทึกและเชื่อมต่อ</button><div class="sub" style="margin-top:8px">'+farmStatus+'</div></div></div>':'')+'</div>'+
   '<div style="position:relative"><button class="tb" data-k="m:user" aria-label="เมนูผู้ใช้"><span class="av">สร</span></button>'+(m==="user"?'<div class="pop"><h4>เข้าสู่ระบบเป็นคุณสุริน</h4><a class="it" href="#profile">โปรไฟล์</a><a class="it" href="#devices">อุปกรณ์ของฉัน</a><button class="it warn" data-k="out">ออกจากระบบ</button></div>':'')+'</div>';
+  if($("firebase-url"))$("firebase-url").value=firebaseConfig.databaseURL;
 }
 
 /* ---------- pages ---------- */
@@ -391,7 +408,7 @@ document.addEventListener("click",function(e){
   if(!b){if(S.menu&&!e.target.closest(".pop")){S.menu=null;renderTop()}if(S.mob&&e.target.id==="ov"){S.mob=false;renderSide()}return}
   S.qf=false;
   if(k==="col"){S.col=!S.col;render(k);return}
-  if(k==="mob"){if(window.matchMedia("(max-width:860px)").matches){S.mob=!S.mob;renderSide()}else{S.col=!S.col;renderSide()}return}
+  if(k==="mob"){var side=$("side");void side.offsetWidth;if(window.matchMedia("(max-width:860px)").matches){S.mob=!S.mob}else{S.col=!S.col}renderSide();b.setAttribute("aria-expanded",String(window.matchMedia("(max-width:860px)").matches?S.mob:!S.col));return}
   if(k.indexOf("m:")===0){var m=k.slice(2);S.menu=S.menu===m?null:m;renderTop();var n=document.querySelector('[data-k="'+k+'"]');if(n)n.focus();return}
   if(k==="theme"){mode=dark?"light":"dark";saveMode();applyTheme();renderTop();return}
   if(k.indexOf("tm:")===0){mode=k.slice(3);saveMode();applyTheme();renderTop();return}
